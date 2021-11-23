@@ -1,11 +1,13 @@
-use std::collections::HashMap;
-use clap::{Arg, App};
-use osshkeys::{PublicKey};
+use clap::{App, Arg};
 use futures::future::join_all;
+use osshkeys::PublicKey;
+use std::collections::HashMap;
 use std::result::Result;
 
-
-async fn get_ssh_key_for_user_from_host(username: &str, host: &str) -> Result<Vec<PublicKey>, reqwest::Error> {
+async fn get_ssh_key_for_user_from_host(
+    username: &str,
+    host: &str,
+) -> Result<Vec<PublicKey>, reqwest::Error> {
     let res = reqwest::get(format!("https://{}/{}.keys", host, username)).await?;
 
     if let Err(err) = res.error_for_status_ref() {
@@ -18,7 +20,7 @@ async fn get_ssh_key_for_user_from_host(username: &str, host: &str) -> Result<Ve
     }
 
     let text = res.text().await?;
-    let mut keys:Vec<PublicKey> = vec![];
+    let mut keys: Vec<PublicKey> = vec![];
 
     // In each page we retrieve there could be multiple keys, separated by a newline.
     // We iterate over all of them
@@ -33,29 +35,36 @@ async fn get_ssh_key_for_user_from_host(username: &str, host: &str) -> Result<Ve
 
         let key = PublicKey::from_keystr(key_without_comments);
         match key {
-            Ok(key) => { keys.push(key); }
-            Err(err) => { println!("We were unable to parse a key from {}: {}", host, err); }
+            Ok(key) => {
+                keys.push(key);
+            }
+            Err(err) => {
+                println!("We were unable to parse a key from {}: {}", host, err);
+            }
         }
     }
 
     Ok(keys)
 }
 
-
 fn main() {
     let matches = App::new("Get Keys")
         .version("0.0.1")
         .author("Riccardo Padovani <riccardo@rpadovani.com>")
         .about("Retrieve users' SSH and GPG keys from GitHub and Gitlab")
-        .arg(Arg::new("username")
-            .required(true)
-            .takes_value(true)
-            .about("Username to look-up"))
-        .arg(Arg::new("hosts")
-            .required(false)
-            .takes_value(true)
-            .default_values(&["gitlab.com", "github.com"])
-            .about("Which hosts should I target?"))
+        .arg(
+            Arg::new("username")
+                .required(true)
+                .takes_value(true)
+                .about("Username to look-up"),
+        )
+        .arg(
+            Arg::new("hosts")
+                .required(false)
+                .takes_value(true)
+                .default_values(&["gitlab.com", "github.com"])
+                .about("Which hosts should I target?"),
+        )
         // .arg(Arg::new("gpg")
         //     .long("gpg-keys")
         //     .about("Retrieve GPG keys instead of SSH keys"))
@@ -86,7 +95,9 @@ fn main() {
                         keys.insert(key.to_string(), key);
                     }
                 }
-                Err(err) => {println!("{}", err);}
+                Err(err) => {
+                    println!("{}", err);
+                }
             }
         }
 
@@ -95,4 +106,3 @@ fn main() {
         }
     });
 }
-
