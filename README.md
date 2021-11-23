@@ -2,6 +2,25 @@
 
 *Retrieving SSH and GPS keys from GitHub and GitLab*
 
+[![asciicast](https://asciinema.org/a/yfVzCpwEeVEuXwZJRaHSOYsBF.svg)](https://asciinema.org/a/yfVzCpwEeVEuXwZJRaHSOYsBF)
+
+### Usage
+
+After having installed Dormarch, you can see all the options with `dormarch -h`.
+
+To retrieve SSH keys of a user from both GitLab.com and GitHub.com, just type the username:
+
+```shell
+dormarch rpadovani
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPBcP26/1Wx695rwnfJPqChM98BZN1e2/CYjpQ1dR8l6
+```
+
+You can append the `--gpg-keys` flag if you are interested in the GPG keys of the user.
+
+### Installation
+
+You can download the latest version of Dormarch from the [GitHub Releases page](https://github.com/rpadovani/dormarch/releases) and place it in your executable directory (e.g., `~/.local/bin/` on Linux).
+
 ### About
 
 This project was born from a real necessity: being able to track and retrieve colleagues' SSH keys. Not everybody knows, you can download them from GitLab and GitHub, if they are available.
