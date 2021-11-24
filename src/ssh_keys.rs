@@ -16,7 +16,7 @@ pub(crate) async fn get_ssh_key_for_user_from_host(
     }
 
     let text = res.text().await?;
-    let mut keys: Vec<String> = vec![];
+    let mut keys = Vec::new();
 
     // In each page we retrieve there could be multiple keys, separated by a newline.
     // We iterate over all of them
@@ -25,12 +25,13 @@ pub(crate) async fn get_ssh_key_for_user_from_host(
         // so we need to remove them. To do so, we split the string in a vector, we truncate the
         // vector, and we recreate a string from it.
         // TODO: there is a better way?
-        let mut split_key: Vec<&str> = raw_key.split_inclusive(" ").collect();
-        split_key.truncate(2);
-        let key_without_comments = &*split_key.into_iter().collect::<String>();
 
-        let key = PublicKey::from_keystr(key_without_comments);
-        match key {
+        let key = match raw_key.match_indices(' ').nth(1) {
+            Some(idx) => &raw_key[0..idx.0],
+            None => &raw_key,
+        };
+
+        match PublicKey::from_keystr(key) {
             Ok(key) => {
                 keys.push(key.to_string());
             }
