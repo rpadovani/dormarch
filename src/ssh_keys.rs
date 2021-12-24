@@ -24,11 +24,10 @@ pub(crate) async fn get_ssh_key_for_user_from_host(
         // Gitlab adds comments in the output, and they are not considered valid from osshkeys,
         // so we need to remove them. To do so, we split the string in a vector, we truncate the
         // vector, and we recreate a string from it.
-        // TODO: there is a better way?
 
         let key = match raw_key.match_indices(' ').nth(1) {
             Some(idx) => &raw_key[0..idx.0],
-            None => &raw_key,
+            None => raw_key,
         };
 
         match PublicKey::from_keystr(key) {
