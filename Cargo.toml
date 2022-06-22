@@ -8,6 +8,6 @@ edition = "2021"
 [dependencies]
 reqwest = "0.11.8"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
-clap = "3.0.0-beta.5"
+clap = "3.2.6"
 osshkeys = "0.5.2"
 futures = "0.3.19"
